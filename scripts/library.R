@@ -1,0 +1,22 @@
+# build library ####
+library(tidyverse)
+library(odbc)
+library(microbenchmark)
+library(janitor)
+library(magrittr)
+library(lubridate)
+library(data.table)
+library(xlsx)
+#library(haven)
+#library(purrr)
+#library(writexl)
+#library(readxl)
+#library(reshape2)
+#library(fst)
+#library(ggrepel)
+#library(gganimate)
+#library(magick)
+library(data.table)
+
+# my functions ####
+source("scripts/functions.R")
