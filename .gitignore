@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+initialise_GitHub.R
 data/
 outputs/
 plots/
