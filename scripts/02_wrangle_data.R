@@ -22,7 +22,7 @@ df_smr1_stay <- df_smr1 %>%
       length_of_stay = sum(length_of_stay)
     ),
     by = 'link_no,cis_marker'] %>% 
-  as.tibble() %>% 
+  as_tibble() %>% 
   mutate(fy=get_fy(admission_date)) %>% 
   filter(admission_date>=lubridate::as_date(from_date),
          discharge_date<=lubridate::as_date(to_date))
@@ -33,7 +33,7 @@ df_smr1_stay <- df_smr1 %>%
 # Don't need this code if we can do the filter in SQL (?):
 fall_pattern_unite <- ".*W[00-19].*"
 df_smr1_stay$fall_flag <- df_smr1_stay %>%
-  unite(.,conditions,contains("condition"),sep = ",") %>%
+  tidyr::unite(.,conditions,contains("condition"),sep = ",") %>%
   pull(conditions) %>%
   grepl(x=.,pattern = fall_pattern_unite) %>%
   as.numeric()

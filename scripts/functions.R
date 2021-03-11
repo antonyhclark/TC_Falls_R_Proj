@@ -1,8 +1,3 @@
-# build library ####
-library(readr)
-library(odbc)
-
-
 # plot_with_lables ####
 # p is a plot object, l is a mapping between variable names and labels
 # https://stackoverflow.com/questions/51238042/key-value-mapping-of-axis-variable-labels-in-ggplot/51239178
@@ -73,4 +68,34 @@ get_fy <- function(date,fy_start_month = 4){
 # get_fy(as.Date("2021-04-01"))
 
 
-
+write_df_to_worksheet <- function(df,wb_path,ws_name,tab_colour="white"){
+  # Header style
+  cs_col_headers <- openxlsx::createStyle(
+    fontName = "Calibri", fontSize = 10, fontColour = "black",
+    numFmt = "GENERAL", border = c("top", "bottom"),
+    borderColour = c("darkslategrey", "black"),
+    borderStyle = c("thin", "medium"),
+    fgFill = c("lightslategrey"),
+    halign = "center", valign = "center",
+    textDecoration = c("bold"), wrapText = T
+  )
+  
+  if (!file.exists(wb_path)){
+    wb_obj <- openxlsx::createWorkbook()
+  } else {
+    wb_obj <- openxlsx::loadWorkbook(wb_path)
+  }
+  ws_obj <- openxlsx::addWorksheet(
+    wb=wb_obj, sheetName = ws_name,
+    gridLines = F, tabColour = tab_colour, zoom = 90
+  )
+  
+  setColWidths(wb_obj, ws_obj, 1:ncol(df), 
+               widths = floor(255/ncol(df)))
+  
+  writeData(wb_obj, ws_obj, x=df,
+            headerStyle = cs_col_headers
+            #name = eval(deparse(enexpr(df)))
+  )
+  saveWorkbook(wb_obj, wb_path, overwrite = T)
+}

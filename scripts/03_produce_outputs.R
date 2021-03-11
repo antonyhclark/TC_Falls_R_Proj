@@ -10,16 +10,12 @@
 hbres_of_interest <- "NHS Greater Glasgow and Clyde"
 comparator_of_interest <- "Scotland"
 
-# Write main dataframe to Excel
-#xlsx::write.xlsx(df_pop,"outputs/df_pop.xlsx")
-#xlsx::write.xlsx(df_falls,"outputs/df_falls.xlsx")
-
-# Write to Excel, set up ####
-wb <- createWorkbook()
-cs1 <- CellStyle(wb) + Font(wb, isItalic = TRUE) # rowcolumns
-cs2 <- CellStyle(wb) + Font(wb, color = "blue")
-cs3 <- CellStyle(wb) + Font(wb, isBold = TRUE) + Border() # header
-
+output_file_path <- paste0(
+  "outputs/",
+  "GCC_falls_FY10_FY19v0.2_",
+  format(Sys.time(),"%Y-%m-%d_%H%M"),
+  ".xlsx"
+)
 
 # 0) all Scotland, all ages FY19 to check vs. Discovery ####
 Sco_all_ages <- full_join(
@@ -48,13 +44,13 @@ GCC_all_ages <- full_join(
 
 Sco_GCC_all_ages <- bind_rows(Sco_all_ages,GCC_all_ages)
 
-sheet_Sco_GCC_all_ages <- createSheet(wb, sheetName = "0_Sco_GCC_all_ages")
+# openxlsx
+write_df_to_worksheet(df = Sco_GCC_all_ages,
+                      wb_path = output_file_path,
+                      ws_name = "0_Sco_GCC_all_ages",
+                      tab_colour = "red")
 
-addDataFrame(
-  Sco_GCC_all_ages, sheet_Sco_GCC_all_ages,
-  colnamesStyle = cs3, rownamesStyle = cs1,
-  colStyle = list(`1` = cs2, `2` = cs2)
-)
+
 
 # 1) Overall age 65+ admission rates for GGC and Scotland ####
 # by year for the last X years (5/10 years?) 
@@ -85,16 +81,12 @@ GCC_65plus <- full_join(
 ) %>% mutate(rate=1000*n_falls/pop)
 
 Sco_GCC_65plus <- bind_rows(Sco_65plus,GCC_65plus)
-sheet_Sco_GCC_65plus <- createSheet(wb, sheetName = "1_Sco_GCC_65plus")
-addDataFrame(
-  Sco_GCC_65plus,
-  sheet_Sco_GCC_65plus,
-  startRow = 1,
-  startColumn = 1,
-  colnamesStyle = cs3,
-  rownamesStyle = cs1,
-  colStyle = list(`1` = cs2, `2` = cs2)
-)
+
+write_df_to_worksheet(df = Sco_GCC_65plus,
+                      wb_path = output_file_path,
+                      ws_name = "1_Sco_GCC_65plus",
+                      tab_colour = "green")
+
 
 # 2) GGC admission rate by age groups ####
 # <65, 65-75, 75-85 and 85+ by year for the last X years 
@@ -123,16 +115,12 @@ GCC_age_group_v1 <- full_join(
 ) %>% mutate(rate = 1000 * n_falls / pop)
 
 Sco_GCC_age_groupv1 <- bind_rows(Sco_age_group_v1, GCC_age_group_v1)
-sheet_Sco_GCC_agegroupv1 <- createSheet(wb, sheetName = "2_Sco_GCC_agegroupv1")
-addDataFrame(
-  Sco_GCC_age_groupv1,
-  sheet_Sco_GCC_agegroupv1,
-  startRow = 1,
-  startColumn = 1,
-  colnamesStyle = cs3,
-  rownamesStyle = cs1,
-  colStyle = list(`1` = cs2, `2` = cs2, `3` = cs2)
-)
+
+write_df_to_worksheet(df = Sco_GCC_age_groupv1,
+                      wb_path = output_file_path,
+                      ws_name = "2_Sco_GCC_agegroupv1",
+                      tab_colour = "yellow")
+
 
 # 3) GGC admission rate by sex and age groups ####
 # 65-69, 70-74, 75-79, 80-84, 85-89 and 90+ (average over last 3 years)
@@ -166,16 +154,11 @@ GCC_sex_agegroupv2 <-
   ) %>% mutate(rate = 1000 * n_falls / pop)
 
 Sco_GCC_sex_agegroupv2 <- bind_rows(Sco_sex_agegroupv2,GCC_sex_agegroupv2)
-sheet_Sco_GCC_sex_agegroupv2 <- createSheet(wb, sheetName = "3_Sco_GCC_sex_agegroupv2")
-addDataFrame(
-  Sco_GCC_sex_agegroupv2,
-  sheet_Sco_GCC_sex_agegroupv2,
-  startRow = 1,
-  startColumn = 1,
-  colnamesStyle = cs3,
-  rownamesStyle = cs1,
-  colStyle = list(`1` = cs2, `2` = cs2, `3` = cs2)
-)
+
+write_df_to_worksheet(df = Sco_GCC_sex_agegroupv2,
+                      wb_path = output_file_path,
+                      ws_name = "3_Sco_GCC_sex_age",
+                      tab_colour = "purple")
 
 # 4) Overall age 65+ admission rates for GGC and Scotland ####
 # by location (code 33-35) (average of last 3 years)
@@ -209,17 +192,11 @@ GCC_65plus_admiss_type <-
   ) %>% mutate(rate = 1000 * n_falls / pop)
 
 Sco_GCC_65plus_admiss_type <- bind_rows(Sco_65plus_admiss_type,GCC_65plus_admiss_type)
-sheet_Sco_GCC_65plus_admiss_type <- createSheet(wb, sheetName = "4_sheet_Sco_GCC_65plus_admiss_type")
-addDataFrame(
-  Sco_GCC_65plus_admiss_type,
-  sheet_Sco_GCC_65plus_admiss_type,
-  startRow = 1,
-  startColumn = 1,
-  colnamesStyle = cs3,
-  rownamesStyle = cs1,
-  colStyle = list(`1` = cs2, `2` = cs2)
-)
 
+write_df_to_worksheet(df = Sco_GCC_65plus_admiss_type,
+                      wb_path = output_file_path,
+                      ws_name = "4_Sco_GCC_65plus_admiss_type",
+                      tab_colour = "grey")
 
 
 # 5a) Overall age 65+ admission rates for GGC and Scotland ####
@@ -273,18 +250,8 @@ GCC_admiss_type_agegroupv1 <-
 
 Sco_GCC_admiss_type_agegroupv1 <- bind_rows(Sco_admiss_type_agegroupv1,
                                             GCC_admiss_type_agegroupv1)
-sheet_Sco_GCC_admiss_type_agegroupv1 <- createSheet(wb, sheetName = "5a_Sco_GCC_admiss_type_agegroupv1")
-addDataFrame(
-  Sco_GCC_admiss_type_agegroupv1,
-  sheet_Sco_GCC_admiss_type_agegroupv1,
-  startRow = 1,
-  startColumn = 1,
-  colnamesStyle = cs3,
-  rownamesStyle = cs1,
-  colStyle = list(`1` = cs2, `2` = cs2, `3` = cs2)
-)
 
-
-# THIS SHOULD BE AT THE END OF THE SCRIPT ####
-saveWorkbook(wb, "outputs/GCC_falls_FY10_FY19v0.1.xlsx")
-
+write_df_to_worksheet(df = Sco_GCC_admiss_type_agegroupv1,
+                      wb_path = output_file_path,
+                      ws_name = "5a_Sco_GCC_admiss_type_age",
+                      tab_colour = "orange")

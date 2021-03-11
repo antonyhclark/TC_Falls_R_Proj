@@ -1,12 +1,13 @@
 # SMR RAW EXTRACT - ALL SCOTLAND ####
 # If data for date range already extracted, load that file
 # otherwise, get data from SMR01 directly
+
 smr1_csv_name <-
   paste("ANALYSIS.SMR01_PI", from_date_3m_prior, to_date_3m_after, sep = '_') %>%
   paste0(., ".csv")
-smr1_csv_path <- paste0("data/", smr1_csv_name) %>%
-  normalizePath() %>%
-  suppressWarnings()
+smr1_csv_path <- paste0("data/", smr1_csv_name) #%>%
+  # normalizePath() %>%
+  # suppressWarnings()
 # need to be careful with using sprintf of sql
 # sprintf can interpret certain sql symbols
 # as meaning variables to be subsituted
@@ -38,16 +39,14 @@ remove(get_dz11_lookup, get_smr_data, df_hscp_loc_dz11) # clean env.
 pop_directory <- "/conf/linkage/output/lookups/Unicode/Populations/Estimates"
 hb_2011_2019_file <- "HB2019_pop_est_1981_2019.rds"
 df_pop <- readRDS(file = file.path(pop_directory,hb_2011_2019_file)) %>% 
-  as.tibble() %>% 
+  as_tibble() %>% 
   filter(year>=from_fy,
          year<=to_fy) %>% 
   select(hb2019name,hb2019,fy=year,age,sex,pop) %>%
   mutate(sex=as.character(sex))
   
   
-suppressWarnings({
-  remove(pop_directory,hb_2011_2019_file) # Clean env  
-})
+remove(pop_directory,hb_2011_2019_file) # Clean env  
 
 # df_pop_hb_fy_age_sex %>% filter(FY==2019) %>% summarise(pop=sum(pop)) # ==5,463,300 (same as Discovery)
 
